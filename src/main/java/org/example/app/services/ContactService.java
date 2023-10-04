@@ -42,7 +42,7 @@ public class ContactService {
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     public Response createContact(Contact contact) {
-        if (Objects.isNull(contact.getId())) {
+        if (Objects.isNull(contact.getId()) || Objects.isNull(contact.getName()) || Objects.isNull(contact.getPhone())) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
 
