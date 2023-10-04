@@ -1,13 +1,13 @@
 package org.example.app.services;
 
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.example.app.entity.Contact;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Path("/api/v1.0/contacts")
@@ -29,5 +29,18 @@ public class ContactService {
         return contactList;
     }
 
+    @GET
+    @Path("{id: [0-9]+}")
+    public Contact getContactById(@PathParam("id") Long id) {
+        Contact contact = new Contact();
+        contact.setId(id);
 
+        int index = Collections.binarySearch(contactList, contact, Comparator.comparing(Contact::getId));
+
+        if (index >= 0) {
+            return contactList.get(index);
+        } else {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+    }
 }
