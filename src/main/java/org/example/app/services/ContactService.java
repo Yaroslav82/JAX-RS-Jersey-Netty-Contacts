@@ -24,5 +24,10 @@ public class ContactService {
         contactList.add(new Contact(4L, "Frank", "+380739625106"));
     }
 
+    @GET
+    public List<Contact> getContacts() {
+        return contactList;
+    }
+
 
 }
