@@ -30,10 +30,7 @@ public class ContactService {
     @GET
     @Path("{id: [0-9]+}")
     public Contact getContactById(@PathParam("id") Long id) {
-        Contact contact = new Contact();
-        contact.setId(id);
-
-        int index = Collections.binarySearch(contactList, contact, Comparator.comparing(Contact::getId));
+        int index = getIndexById(id);
 
         if (index >= 0) {
             return contactList.get(index);
@@ -49,7 +46,7 @@ public class ContactService {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
 
-        int index = Collections.binarySearch(contactList, contact, Comparator.comparing(Contact::getId));
+        int index = getIndexById(contact.getId());
 
         if (index < 0) {
             contactList.add(contact);
@@ -66,9 +63,7 @@ public class ContactService {
     @Path("{id: [0-9]+}")
     @Consumes({MediaType.APPLICATION_JSON})
     public Response updateContact(@PathParam("id") Long id, Contact contact) {
-        contact.setId(id);
-
-        int index = Collections.binarySearch(contactList, contact, Comparator.comparing(Contact::getId));
+        int index = getIndexById(id);
 
         if (index >= 0) {
             Contact updatedContact = contactList.get(index);
@@ -92,10 +87,7 @@ public class ContactService {
     @DELETE
     @Path("{id: [0-9]+}")
     public Response deleteContact(@PathParam("id") Long id) {
-        Contact contact = new Contact();
-        contact.setId(id);
-
-        int index = Collections.binarySearch(contactList, contact, Comparator.comparing(Contact::getId));
+        int index = getIndexById(id);
 
         if (index >= 0) {
             contactList.remove(index);
@@ -105,5 +97,12 @@ public class ContactService {
         } else {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
+    }
+
+    private static int getIndexById(Long id) {
+        Contact contact = new Contact();
+        contact.setId(id);
+
+        return Collections.binarySearch(contactList, contact, Comparator.comparing(Contact::getId));
     }
 }
