@@ -61,4 +61,31 @@ public class ContactService {
             throw new WebApplicationException(Response.Status.CONFLICT);
         }
     }
+
+    @PUT
+    @Path("{id: [0-9]+}")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response updateContact(@PathParam("id") Long id, Contact contact) {
+        contact.setId(id);
+
+        int index = Collections.binarySearch(contactList, contact, Comparator.comparing(Contact::getId));
+
+        if (index >= 0) {
+            Contact updatedContact = contactList.get(index);
+
+            if (Objects.nonNull(contact.getName())) {
+                updatedContact.setName(contact.getName());
+            }
+
+            if (Objects.nonNull(contact.getPhone())) {
+                updatedContact.setPhone(contact.getPhone());
+            }
+
+            return Response
+                    .status(Response.Status.NO_CONTENT)
+                    .build();
+        } else {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+    }
 }
