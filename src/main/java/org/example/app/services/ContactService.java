@@ -5,10 +5,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.example.app.entity.Contact;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.net.URI;
+import java.util.*;
 
 @Path("/api/v1.0/contacts")
 @Produces({MediaType.APPLICATION_JSON})
@@ -41,6 +39,26 @@ public class ContactService {
             return contactList.get(index);
         } else {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+    }
+
+    @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response createContact(Contact contact) {
+        if (Objects.isNull(contact.getId())) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+
+        int index = Collections.binarySearch(contactList, contact, Comparator.comparing(Contact::getId));
+
+        if (index < 0) {
+            contactList.add(contact);
+            return Response
+                    .status(Response.Status.CREATED)
+                    .location(URI.create("/api/v1.0/contacts/" + contact.getId()))
+                    .build();
+        } else {
+            throw new WebApplicationException(Response.Status.CONFLICT);
         }
     }
 }
