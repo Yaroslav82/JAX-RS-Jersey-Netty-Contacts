@@ -88,4 +88,22 @@ public class ContactService {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
     }
+
+    @DELETE
+    @Path("{id: [0-9]+}")
+    public Response deleteContact(@PathParam("id") Long id) {
+        Contact contact = new Contact();
+        contact.setId(id);
+
+        int index = Collections.binarySearch(contactList, contact, Comparator.comparing(Contact::getId));
+
+        if (index >= 0) {
+            contactList.remove(index);
+            return Response
+                    .status(Response.Status.NO_CONTENT)
+                    .build();
+        } else {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+    }
 }
